@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year 2026</title>
+    <style>
+        /* THEME: Golden Gala */
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Times New Roman', serif;
+            overflow: hidden;
+            color: #d4af37; /* Gold Color */
+        }
+
+        /* The Gift Box */
+        #gift-box {
+            font-size: 100px;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+            transition: transform 0.3s;
+            user-select: none; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #gift-box:active {
+            transform: scale(0.9); 
+        }
+
+        /* The Hidden Message */
+        #message-container {
+            display: none; 
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #bf953f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 0px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        p {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Firework Particle Style */
+        .particle {
+            position: absolute;
+            /* Background color is now set by JavaScript randomly */
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            /* Adds a glow effect using the current text color */
+            box-shadow: 0 0 8px currentColor; 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gift-box" onclick="openGift()">🎁</div>
+
+    <div id="message-container">
+        <h1>2026</h1>
+        <p>Happy New Year</p>
+        <p style="font-size: 1rem; color: #888;">— Wishing you a Golden Year —</p>
+    </div>
+
+    <script>
+        // --- SOUND LINKS (Matching your files) ---
+        const fireworksSoundURL = "firework.mp3"; 
+        const musicURL = "song1.mp3"; 
+
+        // --- FIREWORK COLORS (Red, Green, Blue, White, Orange) ---
+        const fireworkColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFFFF', '#FF8C00'];
+
+        function openGift() {
+            // 1. Hide box and play sound
+            document.getElementById('gift-box').style.display = 'none';
+            playAudio();
+
+            // 2. Launch multiple fireworks
+            // We launch 8 fireworks, one every 300ms, to spread them out.
+            let count = 0;
+            const interval = setInterval(() => {
+                 // Pick random spot on screen
+                 const randomX = Math.random() * window.innerWidth;
+                 // Keep mostly in upper 70% of screen
+                 const randomY = Math.random() * (window.innerHeight * 0.7); 
+                 createFirework(randomX, randomY);
+                 count++;
+                 if (count > 7) clearInterval(interval); // Stop after 8 bursts
+             }, 300);
+
+            // 3. Show the message after delay
+            setTimeout(() => {
+                const msg = document.getElementById('message-container');
+                msg.style.display = 'block';
+                msg.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1000, fill: 'forwards' });
+            }, 1500);
+        }
+
+        function playAudio() {
+            if (fireworksSoundURL) { new Audio(fireworksSoundURL).play(); }
+            if (musicURL) {
+                const music = new Audio(musicURL);
+                music.loop = true; music.volume = 0.5; music.play();
+            }
+        }
+
+        // Function to create ONE specific firework explosion at X, Y
+        function createFirework(x, y) {
+            // Pick one random color for this entire burst
+            const color = fireworkColors[Math.floor(Math.random() * fireworkColors.length)];
+
+            // Create 35 particles for this burst
+            for (let i = 0; i < 35; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                // Set the color and the glowing shadow color
+                particle.style.backgroundColor = color;
+                particle.style.color = color; 
+                document.body.appendChild(particle);
+
+                // Start at explosion center
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+
+                // Calculate random movement
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 150 + 50;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+
+                // Animate: Move out, shrink, fade, and fall slightly (gravity)
+                particle.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty + 100}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 800 + 800, // Random time between 0.8s and 1.6s
+                    easing: 'ease-out'
+                });
+
+                // Clean up particle after animation finishes
+                setTimeout(() => particle.remove(), 1600);
+            }
+        }
+    </script>
+
+</body>
+</html>
