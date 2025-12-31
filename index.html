@@ -66,7 +66,7 @@
             100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
 
-        /* The Hidden Message - NOW WITH GLASSMORPHISM */
+        /* The Hidden Message - WITH GLASSMORPHISM */
         #message-container {
             display: none; 
             text-align: center;
@@ -171,6 +171,10 @@
         <h1>2026</h1>
         <p id="wish-text">...</p>
         <p style="font-size: 1rem; color: #888;">— From Chirag ❤️ —</p>
+
+        <button onclick="shareOnWhatsApp()" style="margin-top: 20px; padding: 10px 20px; font-size: 1rem; background-color: #25D366; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Share on WhatsApp 📲
+        </button>
     </div>
 
     <script>
@@ -190,6 +194,7 @@
             "New Year, New Adventures, Same Great You! 🌍",
             "Let your dreams take flight in 2026! 🦋",
             "Sending you good vibes and great times for the year ahead! 🌈",
+            "Here’s to another year of making memories together! 📸"
         ];
 
         window.onload = function() {
@@ -198,6 +203,19 @@
             document.addEventListener('mousemove', parallaxEffect);
             document.addEventListener('touchmove', parallaxEffect);
         };
+
+        // --- NEW WHATSAPP SHARE FUNCTION ---
+        function shareOnWhatsApp() {
+            // 1. Define the message
+            // window.location.href gets the current address of your site automatically!
+            const message = "Check out this magical New Year surprise! 🎁✨ " + window.location.href;
+
+            // 2. Create the WhatsApp link
+            const whatsappLink = "https://wa.me/?text=" + encodeURIComponent(message);
+
+            // 3. Open WhatsApp in a new tab
+            window.open(whatsappLink, '_blank');
+        }
 
         // --- PARALLAX EFFECT ---
         function parallaxEffect(e) {
