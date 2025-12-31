@@ -12,7 +12,7 @@
             background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
             height: 100vh;
             display: flex;
-            flex-direction: column; /* Stacks items vertically */
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
             font-family: 'Times New Roman', serif;
@@ -32,8 +32,8 @@
         #gift-box {
             width: 120px;
             height: 120px;
-            background-color: #000; /* Black Box */
-            border: 4px solid #fff; /* White Border */
+            background-color: #000; 
+            border: 4px solid #fff; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -70,7 +70,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100%;
+            width: 90%; /* Wider to fit longer text */
         }
 
         h1 {
@@ -82,10 +82,12 @@
             text-shadow: 0px 0px 20px rgba(212, 175, 55, 0.5);
         }
 
-        p {
+        /* The Main Wish Text */
+        #wish-text {
             font-size: 1.5rem;
             color: #fff;
             margin-top: 10px;
+            min-height: 3rem; /* Prevents jumping */
         }
 
         @keyframes float {
@@ -118,8 +120,8 @@
 
     <div id="message-container">
         <h1>2026</h1>
-        <p>Happy New Year</p>
-        <p style="font-size: 1rem; color: #888;">— Wishing you a Golden Year —</p>
+        <p id="wish-text">Happy New Year</p>
+        <p style="font-size: 1rem; color: #888;">— From Chirag ❤️ —</p>
     </div>
 
     <script>
@@ -129,44 +131,56 @@
 
         const fireworkColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFFFF', '#FF8C00'];
 
+        // --- LIST OF 10 WISHES ---
+        const wishes = [
+            "May your 2026 be filled with magic and dreams come true! ✨",
+            "Wishing you 12 months of success, 52 weeks of laughter, and 365 days of fun! 🚀",
+            "Cheers to a fresh start and a bright future! 🥂",
+            "Health, Wealth, and Happiness for you in 2026! 🌟",
+            "May this new year bring you endless opportunities! 🔑",
+            "Wishing you a year fully loaded with happiness! 💖",
+            "New Year, New Adventures, Same Great You! 🌍",
+            "Let your dreams take flight in 2026! 🦋",
+            "Sending you good vibes and great times for the year ahead! 🌈",
+            "Here’s to another year of making memories together! 📸"
+        ];
+
         function startCountdown() {
-            // 1. Hide the instruction and the box immediately
             document.getElementById('instruction').style.display = 'none';
             const box = document.getElementById('gift-box');
             const countDisplay = document.getElementById('countdown');
             
-            // Stop the floating animation so it sits still during countdown
             box.style.animation = 'none';
             
-            // 2. Start the Countdown Sequence
-            // We use a "Timer" to change the number every second
+            let timeLeft = 3; 
             
-            let timeLeft = 3; // Start at 3
-            
-            // Hide box, show countdown number
             box.style.display = 'none';
             countDisplay.style.display = 'block';
             countDisplay.innerText = timeLeft;
 
             const timer = setInterval(() => {
-                timeLeft--; // Subtract 1
+                timeLeft--; 
                 
                 if (timeLeft > 0) {
-                    countDisplay.innerText = timeLeft; // Show 2, then 1
+                    countDisplay.innerText = timeLeft; 
                 } else {
-                    // 3. BLAST OFF!
-                    clearInterval(timer); // Stop counting
-                    countDisplay.style.display = 'none'; // Hide number
-                    openGift(); // Trigger fireworks
+                    clearInterval(timer); 
+                    countDisplay.style.display = 'none'; 
+                    openGift(); 
                 }
-            }, 1000); // Wait 1000 milliseconds (1 second) between numbers
+            }, 1000); 
         }
 
         function openGift() {
-            // Play Sounds
+            // 1. Pick a RANDOM wish from the list
+            const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
+            
+            // 2. Put that wish into the page
+            document.getElementById('wish-text').innerText = randomWish;
+
+            // 3. Play Sounds & Fireworks
             playAudio();
 
-            // Launch Fireworks
             let count = 0;
             const interval = setInterval(() => {
                  const randomX = Math.random() * window.innerWidth;
@@ -176,7 +190,6 @@
                  if (count > 7) clearInterval(interval); 
              }, 300);
 
-            // Show Message
             setTimeout(() => {
                 const msg = document.getElementById('message-container');
                 msg.style.display = 'block';
