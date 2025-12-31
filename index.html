@@ -12,26 +12,53 @@
             background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
             height: 100vh;
             display: flex;
+            flex-direction: column; /* Stacks items vertically */
             justify-content: center;
             align-items: center;
             font-family: 'Times New Roman', serif;
             overflow: hidden;
-            color: #d4af37; /* Gold Color */
+            color: #d4af37; 
         }
 
-        /* The Gift Box */
+        /* "Tap to Open" Text */
+        #instruction {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #fff;
+            animation: pulse 2s infinite;
+        }
+
+        /* The Mystery Box */
         #gift-box {
-            font-size: 100px;
+            width: 120px;
+            height: 120px;
+            background-color: #000; /* Black Box */
+            border: 4px solid #fff; /* White Border */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            color: #fff;
             cursor: pointer;
             animation: float 3s ease-in-out infinite;
             z-index: 10;
-            transition: transform 0.3s;
-            user-select: none; 
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         #gift-box:active {
-            transform: scale(0.9); 
+            transform: scale(0.9);
+        }
+
+        /* The Countdown Number */
+        #countdown {
+            display: none;
+            font-size: 8rem;
+            font-weight: bold;
+            color: #fff;
+            z-index: 20;
         }
 
         /* The Hidden Message */
@@ -39,6 +66,11 @@
             display: none; 
             text-align: center;
             z-index: 10;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
         }
 
         h1 {
@@ -56,28 +88,33 @@
             margin-top: 10px;
         }
 
-        /* Animations */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
         }
 
-        /* Firework Particle Style */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         .particle {
             position: absolute;
-            /* Background color is now set by JavaScript randomly */
             width: 6px;
             height: 6px;
             border-radius: 50%;
             pointer-events: none;
-            /* Adds a glow effect using the current text color */
             box-shadow: 0 0 8px currentColor; 
         }
     </style>
 </head>
 <body>
 
-    <div id="gift-box" onclick="openGift()">🎁</div>
+    <div id="instruction">Tap to Open</div>
+
+    <div id="gift-box" onclick="startCountdown()">?</div>
+
+    <div id="countdown">3</div>
 
     <div id="message-container">
         <h1>2026</h1>
@@ -86,37 +123,65 @@
     </div>
 
     <script>
-        // --- SOUND LINKS (Matching your files) ---
+        // --- SOUND LINKS ---
         const fireworksSoundURL = "firework.mp3"; 
         const musicURL = "song1.mp3"; 
 
-        // --- FIREWORK COLORS (Red, Green, Blue, White, Orange) ---
         const fireworkColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFFFF', '#FF8C00'];
 
+        function startCountdown() {
+            // 1. Hide the instruction and the box immediately
+            document.getElementById('instruction').style.display = 'none';
+            const box = document.getElementById('gift-box');
+            const countDisplay = document.getElementById('countdown');
+            
+            // Stop the floating animation so it sits still during countdown
+            box.style.animation = 'none';
+            
+            // 2. Start the Countdown Sequence
+            // We use a "Timer" to change the number every second
+            
+            let timeLeft = 3; // Start at 3
+            
+            // Hide box, show countdown number
+            box.style.display = 'none';
+            countDisplay.style.display = 'block';
+            countDisplay.innerText = timeLeft;
+
+            const timer = setInterval(() => {
+                timeLeft--; // Subtract 1
+                
+                if (timeLeft > 0) {
+                    countDisplay.innerText = timeLeft; // Show 2, then 1
+                } else {
+                    // 3. BLAST OFF!
+                    clearInterval(timer); // Stop counting
+                    countDisplay.style.display = 'none'; // Hide number
+                    openGift(); // Trigger fireworks
+                }
+            }, 1000); // Wait 1000 milliseconds (1 second) between numbers
+        }
+
         function openGift() {
-            // 1. Hide box and play sound
-            document.getElementById('gift-box').style.display = 'none';
+            // Play Sounds
             playAudio();
 
-            // 2. Launch multiple fireworks
-            // We launch 8 fireworks, one every 300ms, to spread them out.
+            // Launch Fireworks
             let count = 0;
             const interval = setInterval(() => {
-                 // Pick random spot on screen
                  const randomX = Math.random() * window.innerWidth;
-                 // Keep mostly in upper 70% of screen
                  const randomY = Math.random() * (window.innerHeight * 0.7); 
                  createFirework(randomX, randomY);
                  count++;
-                 if (count > 7) clearInterval(interval); // Stop after 8 bursts
+                 if (count > 7) clearInterval(interval); 
              }, 300);
 
-            // 3. Show the message after delay
+            // Show Message
             setTimeout(() => {
                 const msg = document.getElementById('message-container');
                 msg.style.display = 'block';
                 msg.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1000, fill: 'forwards' });
-            }, 1500);
+            }, 1000);
         }
 
         function playAudio() {
@@ -127,40 +192,27 @@
             }
         }
 
-        // Function to create ONE specific firework explosion at X, Y
         function createFirework(x, y) {
-            // Pick one random color for this entire burst
             const color = fireworkColors[Math.floor(Math.random() * fireworkColors.length)];
-
-            // Create 35 particles for this burst
             for (let i = 0; i < 35; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                // Set the color and the glowing shadow color
                 particle.style.backgroundColor = color;
                 particle.style.color = color; 
                 document.body.appendChild(particle);
-
-                // Start at explosion center
                 particle.style.left = x + 'px';
                 particle.style.top = y + 'px';
-
-                // Calculate random movement
                 const angle = Math.random() * Math.PI * 2;
                 const velocity = Math.random() * 150 + 50;
                 const tx = Math.cos(angle) * velocity;
                 const ty = Math.sin(angle) * velocity;
-
-                // Animate: Move out, shrink, fade, and fall slightly (gravity)
                 particle.animate([
                     { transform: 'translate(0, 0) scale(1)', opacity: 1 },
                     { transform: `translate(${tx}px, ${ty + 100}px) scale(0)`, opacity: 0 }
                 ], {
-                    duration: Math.random() * 800 + 800, // Random time between 0.8s and 1.6s
+                    duration: Math.random() * 800 + 800,
                     easing: 'ease-out'
                 });
-
-                // Clean up particle after animation finishes
                 setTimeout(() => particle.remove(), 1600);
             }
         }
@@ -168,3 +220,4 @@
 
 </body>
 </html>
+
