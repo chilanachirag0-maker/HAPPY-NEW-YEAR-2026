@@ -9,7 +9,8 @@
         body {
             margin: 0;
             padding: 0;
-            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+            /* Deep Space Gradient */
+            background: linear-gradient(to bottom, #000000, #0a0a2a, #1a1a1a);
             height: 100vh;
             display: flex;
             flex-direction: column; 
@@ -26,6 +27,7 @@
             margin-bottom: 20px;
             color: #fff;
             animation: pulse 2s infinite;
+            z-index: 20; 
         }
 
         /* The Mystery Box */
@@ -40,41 +42,61 @@
             font-size: 80px;
             color: #fff;
             cursor: pointer;
-            animation: float 3s ease-in-out infinite;
-            z-index: 10;
+            z-index: 20; 
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            animation: float 3s ease-in-out infinite;
+            transition: transform 0.1s; /* Smooth movement for parallax */
         }
 
-        #gift-box:active {
-            transform: scale(0.9);
+        /* SHAKE Animation */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
 
-        /* The Countdown Number */
-        #countdown {
-            display: none;
-            font-size: 8rem;
-            font-weight: bold;
-            color: #fff;
-            z-index: 20;
-        }
-
-        /* The Hidden Message */
+        /* The Hidden Message - NOW WITH GLASSMORPHISM */
         #message-container {
             display: none; 
             text-align: center;
-            z-index: 10;
+            z-index: 20;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90%; /* Wider to fit longer text */
+            width: 85%; 
+            
+            /* Glassmorphism Styles */
+            background: rgba(255, 255, 255, 0.1); /* See-through white */
+            backdrop-filter: blur(12px); /* The "Frosted" Blur effect */
+            -webkit-backdrop-filter: blur(12px); /* For Safari */
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Soft shadow */
+            border-radius: 20px;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #fff;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         h1 {
-            font-size: 4rem;
+            font-size: 5rem; 
             margin: 0;
             background: linear-gradient(to right, #bf953f, #fcf6ba, #bf953f);
             -webkit-background-clip: text;
@@ -82,14 +104,26 @@
             text-shadow: 0px 0px 20px rgba(212, 175, 55, 0.5);
         }
 
-        /* The Main Wish Text */
         #wish-text {
             font-size: 1.5rem;
             color: #fff;
-            margin-top: 10px;
-            min-height: 3rem; /* Prevents jumping */
+            margin-top: 15px;
+            min-height: 3rem; 
         }
 
+        /* STAR CONTAINER (For Parallax Movement) */
+        #star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            transition: transform 0.1s linear; /* Smooth parallax */
+        }
+
+        /* ANIMATIONS */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
@@ -100,6 +134,19 @@
             50% { opacity: 0.5; }
         }
 
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
         .particle {
             position: absolute;
             width: 6px;
@@ -107,20 +154,22 @@
             border-radius: 50%;
             pointer-events: none;
             box-shadow: 0 0 8px currentColor; 
+            z-index: 30;
         }
     </style>
 </head>
 <body>
 
+    <div id="star-field"></div>
+
     <div id="instruction">Tap to Open</div>
 
-    <div id="gift-box" onclick="startCountdown()">?</div>
-
-    <div id="countdown">3</div>
+    <div id="gift-box" onclick="shakeBox()">?</div>
 
     <div id="message-container">
+        <h2>Happy New Year</h2> 
         <h1>2026</h1>
-        <p id="wish-text">Happy New Year</p>
+        <p id="wish-text">...</p>
         <p style="font-size: 1rem; color: #888;">— From Chirag ❤️ —</p>
     </div>
 
@@ -131,7 +180,6 @@
 
         const fireworkColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFFFF', '#FF8C00'];
 
-        // --- LIST OF 10 WISHES ---
         const wishes = [
             "May your 2026 be filled with magic and dreams come true! ✨",
             "Wishing you 12 months of success, 52 weeks of laughter, and 365 days of fun! 🚀",
@@ -142,44 +190,95 @@
             "New Year, New Adventures, Same Great You! 🌍",
             "Let your dreams take flight in 2026! 🦋",
             "Sending you good vibes and great times for the year ahead! 🌈",
-            "Here’s to another year of making memories together! 📸"
         ];
 
-        function startCountdown() {
+        window.onload = function() {
+            createStars();
+            // Start Parallax Event Listener
+            document.addEventListener('mousemove', parallaxEffect);
+            document.addEventListener('touchmove', parallaxEffect);
+        };
+
+        // --- PARALLAX EFFECT ---
+        function parallaxEffect(e) {
+            let x, y;
+            // Get mouse or touch position
+            if(e.type === 'touchmove') {
+                x = e.touches[0].clientX;
+                y = e.touches[0].clientY;
+            } else {
+                x = e.clientX;
+                y = e.clientY;
+            }
+
+            // Calculate movement (opposite direction)
+            const moveX = (window.innerWidth / 2 - x) * 0.05; 
+            const moveY = (window.innerHeight / 2 - y) * 0.05;
+
+            // Apply to Star Field
+            const starField = document.getElementById('star-field');
+            starField.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            
+            // Apply subtle effect to Gift Box too (3D feel)
+            const box = document.getElementById('gift-box');
+            // Only apply if box isn't shaking (shaking overrides transform)
+            if (box.style.animationName !== 'shake') {
+                 box.style.transform = `translate(${moveX * 0.5}px, ${moveY * 0.5}px)`;
+            }
+        }
+
+        function createStars() {
+            const starContainer = document.getElementById('star-field');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                star.style.left = x + 'px';
+                star.style.top = y + 'px';
+                const size = Math.random() * 3;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starContainer.appendChild(star);
+            }
+        }
+
+        function shakeBox() {
             document.getElementById('instruction').style.display = 'none';
             const box = document.getElementById('gift-box');
-            const countDisplay = document.getElementById('countdown');
             
-            box.style.animation = 'none';
+            // 1. Transform Box
+            box.style.backgroundColor = "#d4af37"; 
+            box.style.color = "#000"; 
+            box.style.border = "4px solid #fff";
+            box.innerText = "🎁"; 
             
-            let timeLeft = 3; 
-            
-            box.style.display = 'none';
-            countDisplay.style.display = 'block';
-            countDisplay.innerText = timeLeft;
+            // 2. Start Shake
+            box.style.animation = "shake 0.5s infinite";
 
-            const timer = setInterval(() => {
-                timeLeft--; 
-                
-                if (timeLeft > 0) {
-                    countDisplay.innerText = timeLeft; 
-                } else {
-                    clearInterval(timer); 
-                    countDisplay.style.display = 'none'; 
-                    openGift(); 
-                }
-            }, 1000); 
+            // 3. VIBRATE (Haptic Feedback)
+            // Pattern: Vibrate 200ms, pause 100ms...
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200, 100]);
+            }
+
+            setTimeout(() => {
+                box.style.display = 'none'; 
+                openGift(); 
+            }, 3000); 
         }
 
         function openGift() {
-            // 1. Pick a RANDOM wish from the list
             const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
-            
-            // 2. Put that wish into the page
             document.getElementById('wish-text').innerText = randomWish;
 
-            // 3. Play Sounds & Fireworks
             playAudio();
+            
+            // HUGE VIBRATION for explosion
+            if (navigator.vibrate) {
+                navigator.vibrate(1000); // 1 second vibration
+            }
 
             let count = 0;
             const interval = setInterval(() => {
